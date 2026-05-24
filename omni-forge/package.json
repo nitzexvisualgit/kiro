@@ -1,0 +1,25 @@
+{
+  "name": "omni-forge",
+  "version": "1.0.0",
+  "displayName": "Omni Forge by Nitzex Visual",
+  "description": "Commercial-grade After Effects automation suite. Forge, Curveset, Typecast, FX Core, Vault, Kinetic, Studio.",
+  "author": {
+    "name": "Nitin Shankhwar",
+    "brand": "Nitzex Visual",
+    "email": "nitzexbusiness@gmail.com",
+    "url": "https://www.instagram.com/nitzexvisual"
+  },
+  "license": "Proprietary",
+  "private": true,
+  "main": "client/index.html",
+  "host": "host/main.jsx",
+  "bundleId": "com.nitzexvisual.omniforge",
+  "scripts": {
+    "keys:generate": "node scripts/generate-keys.js",
+    "package:zxp": "node scripts/build-zxp.js",
+    "deploy:worker": "wrangler deploy server/worker.js"
+  },
+  "engines": {
+    "ae": ">=17.0"
+  }
+}

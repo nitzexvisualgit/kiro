@@ -1,0 +1,134 @@
+/* Reset + base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  color: var(--fg-1);
+  background: var(--bg-0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+  user-select: none;
+  overflow: hidden;
+}
+.hidden { display: none !important; }
+
+/* App shell */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(180deg, var(--bg-0) 0%, #050505 100%);
+}
+
+/* Topbar */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 44px; padding: 0 var(--s-4);
+  background: rgba(17,17,19,0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--line);
+  flex: 0 0 auto;
+}
+.brand { display: flex; align-items: baseline; gap: var(--s-2); }
+.brand-mark {
+  font-size: 14px;
+  color: var(--primary);
+  filter: drop-shadow(0 0 6px var(--primary-glow));
+}
+.brand-title { font-size: var(--fs-lg); font-weight: 600; color: var(--fg-0); letter-spacing: -0.02em; }
+.brand-by    { font-size: var(--fs-xs); color: var(--fg-3); font-weight: 400; }
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 2px;
+  padding: var(--s-2) var(--s-3);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 0 0 auto;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  font: inherit; font-size: var(--fs-sm); font-weight: 500;
+  color: var(--fg-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-2);
+  cursor: pointer;
+  transition: all var(--tx-fast);
+}
+.tab:hover { color: var(--fg-0); background: var(--bg-3); }
+.tab.active {
+  color: var(--fg-0);
+  background: var(--bg-3);
+  border-color: var(--line-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+
+/* Main content scroller */
+.content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--s-4);
+  scroll-behavior: smooth;
+}
+.content::-webkit-scrollbar { width: 6px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--bg-4); border-radius: 3px; }
+.content::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+/* Section card */
+.card {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-3);
+  padding: var(--s-4);
+  margin-bottom: var(--s-3);
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--s-3);
+}
+.card-title {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--fg-0);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: flex; align-items: center; gap: var(--s-2);
+}
+.card-title::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+.card-actions { display: flex; gap: 4px; }
+
+/* Grid helpers */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s-2); }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: var(--s-2); }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--s-2); }
+.row    { display: flex; gap: var(--s-2); align-items: center; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); }
+.col    { display: flex; flex-direction: column; gap: var(--s-2); }
+.gap-3  { gap: var(--s-3); }
+.gap-4  { gap: var(--s-4); }
+.mt-2 { margin-top: var(--s-2); } .mt-3 { margin-top: var(--s-3); } .mt-4 { margin-top: var(--s-4); }
+
+/* Responsive: when panel is narrow, collapse multi-column grids */
+@media (max-width: 380px) {
+  .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr 1fr; }
+  .tab { padding: 5px 9px; font-size: var(--fs-xs); }
+}
