@@ -33,10 +33,9 @@
   }
 
   // Probe expression run on the host: returns "ready" only if the dispatcher
-  // AND the OF namespace AND OF.U (utils) are all present. Module-load can
-  // silently fail and leave just the dispatcher behind, which is the bug
-  // that produced "Empty response from host" errors.
-  var PROBE = '(typeof $.__omniForgeDispatch === "function" && typeof OF !== "undefined" && typeof OF.U !== "undefined") ? "ready" : "boot"';
+  // AND $.global.OF AND $.global.OF.U are all present. (OF lives on $.global
+  // so it survives across IIFE scopes - see host/lib/utils.jsx.)
+  var PROBE = '(typeof $.__omniForgeDispatch === "function" && $.global.OF && $.global.OF.U) ? "ready" : "boot"';
 
 
 
@@ -59,9 +58,9 @@
         '} catch (e) { ' +
           '$.global._OF_BOOT_LOG.push("evalFile threw: " + e.toString() + " (line " + (e.line||"?") + ")"); ' +
         '} ' +
-        '(typeof $.__omniForgeDispatch === "function" && typeof OF !== "undefined" && typeof OF.U !== "undefined") ' +
+        '(typeof $.__omniForgeDispatch === "function" && $.global.OF && $.global.OF.U) ' +
           '? "ready" ' +
-          ': ("BOOT_FAIL | " + (typeof OF==="undefined"?"OF=undefined":(typeof OF.U==="undefined"?"OF.U=undefined":"dispatcher=missing")) + " | log: " + $.global._OF_BOOT_LOG.join("; ") + " | extRoot=' + safe + '")';
+          ': ("BOOT_FAIL | " + (!$.global.OF?"OF=undefined":(!$.global.OF.U?"OF.U=undefined":"dispatcher=missing")) + " | log: " + $.global._OF_BOOT_LOG.join("; ") + " | extRoot=' + safe + '")';
       return rawEval(bootScript).then(function (r) {
         if (r === "ready") return true;
         throw new Error(r || "Host engine returned no response. Restart AE and try again.");
@@ -155,8 +154,9 @@
     }
     return window.Bridge.rawEval(
       'JSON.stringify({' +
-        'OF: typeof OF, ' +
-        'OF_U: typeof OF !== "undefined" ? typeof OF.U : "n/a", ' +
+        'globalOF: typeof $.global.OF, ' +
+        'globalOF_U: $.global.OF ? typeof $.global.OF.U : "n/a", ' +
+        'modulesLoaded: $.global.OF ? (function(){var k=[]; for (var n in $.global.OF) k.push(n); return k.join(","); })() : "n/a", ' +
         'dispatcher: typeof $.__omniForgeDispatch, ' +
         'extRoot: $.global._OF_EXT_ROOT || "(not set)", ' +
         'bootLog: ($.global._OF_BOOT_LOG || []).join("; "), ' +

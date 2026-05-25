@@ -1,9 +1,15 @@
 /**
  * Omni Forge - Host utilities.
  * Safe AE primitives, error-boxed wrappers, type guards.
+ *
+ * IMPORTANT: OF is stored on $.global so it survives across IIFE scopes
+ * and is reachable by the dispatcher (which is registered outside the
+ * loader IIFE in main.jsx). Storing it as a `var` made it disappear after
+ * main.jsx's loader finished, causing "OF is undefined" at dispatch time.
  */
 
-var OF = (typeof OF !== "undefined") ? OF : {};
+if (!$.global.OF) $.global.OF = {};
+var OF = $.global.OF;
 
 OF.U = (function () {
   function isComp(item) {

@@ -86,7 +86,9 @@ function __OF_safeError(err) {
 // Global dispatcher - the panel calls $.__omniForgeDispatch("Module.fn", "{...}")
 $.__omniForgeDispatch = function (fnPath, argsJson) {
     try {
-        if (typeof OF === "undefined") {
+        // OF lives on $.global to survive across IIFE scopes - see utils.jsx
+        var OF = $.global.OF;
+        if (!OF) {
             return __OF_safeError("Host modules not loaded. Restart After Effects.");
         }
         var parts = fnPath.split(".");
