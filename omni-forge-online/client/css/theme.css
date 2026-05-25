@@ -1,0 +1,63 @@
+/*
+  Omni Forge - Theme tokens.
+  Apple-inspired dark aesthetic. Lime primary, amber secondary, surgical contrast.
+*/
+:root {
+  /* Palette */
+  --bg-0:   #0a0a0a;
+  --bg-1:   #111113;
+  --bg-2:   #18181b;
+  --bg-3:   #1f1f23;
+  --bg-4:   #27272a;
+  --line:   rgba(255,255,255,0.06);
+  --line-2: rgba(255,255,255,0.10);
+
+  --fg-0:   #fafafa;
+  --fg-1:   #d4d4d8;
+  --fg-2:   #a1a1aa;
+  --fg-3:   #71717a;
+
+  --primary:        #a3e635;   /* lime */
+  --primary-fg:     #0a0a0a;
+  --primary-hover:  #b8f04a;
+  --primary-soft:   rgba(163,230,53,0.12);
+  --primary-glow:   rgba(163,230,53,0.35);
+
+  --accent:         #f59e0b;   /* amber */
+  --accent-soft:    rgba(245,158,11,0.12);
+
+  --danger:         #ef4444;
+  --danger-soft:    rgba(239,68,68,0.12);
+
+  --info:           #38bdf8;
+  --info-soft:      rgba(56,189,248,0.12);
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+               "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  --fs-xs: 10.5px;
+  --fs-sm: 11.5px;
+  --fs-md: 12.5px;
+  --fs-lg: 14px;
+  --fs-xl: 17px;
+  --fs-2xl: 22px;
+
+  /* Spacing */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 20px; --s-6: 24px; --s-7: 32px; --s-8: 40px;
+
+  /* Radius */
+  --r-1: 6px;  --r-2: 8px;  --r-3: 10px; --r-4: 14px; --r-5: 18px;
+
+  /* Motion */
+  --tx-fast: 120ms cubic-bezier(.4,0,.2,1);
+  --tx-base: 200ms cubic-bezier(.4,0,.2,1);
+  --tx-slow: 320ms cubic-bezier(.4,0,.2,1);
+
+  /* Shadow */
+  --sh-1: 0 1px 2px rgba(0,0,0,0.40);
+  --sh-2: 0 4px 12px rgba(0,0,0,0.45);
+  --sh-3: 0 10px 30px rgba(0,0,0,0.55);
+}

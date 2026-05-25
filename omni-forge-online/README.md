@@ -1,7 +1,8 @@
-# Omni Forge — OFFLINE EDITION 🟢
+# Omni Forge — ONLINE EDITION 🔵
 
-> **You are looking at the OFFLINE version.** No internet, no server, no Cloudflare. Activation just works.
-> If you want the server-enforced 3-device-limit version instead, see [`../omni-forge-online/`](../omni-forge-online/).
+> **You are looking at the ONLINE version.** This requires a free Cloudflare Worker (your server).
+> ⚠️ **Will NOT activate out of the box** until you deploy the Worker and update `client/js/license.js` with your URL.
+> If you want the simpler offline version, see [`../omni-forge-offline/`](../omni-forge-offline/).
 
 **Commercial-grade automation suite for Adobe After Effects.**
 Eight surgical workspaces — Forge, Curveset, Typecast, FX Core, Vault, Kinetic, Studio — that cut hours from every motion-graphics project.
@@ -47,9 +48,9 @@ Eight surgical workspaces — Forge, Curveset, Typecast, FX Core, Vault, Kinetic
 ## License
 
 Activate with a key in the format `OMNI-XXXX-XXXX-XXXX-XXXX`.
-**Activation is 100% offline** — no internet required, ever. Per the license terms, one key is for personal use on up to 3 devices owned by the buyer.
+One key works on **up to 3 devices**. Re-installs on the same device count as zero.
 
-> Vendor guide: [`docs/LICENSING.md`](docs/LICENSING.md)
+> Vendor setup: [`docs/LICENSE-SETUP.md`](docs/LICENSE-SETUP.md)
 > Security model + caveats: [`docs/SECURITY.md`](docs/SECURITY.md)
 
 ---
