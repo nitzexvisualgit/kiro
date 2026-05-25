@@ -44,9 +44,9 @@ Eight surgical workspaces — Forge, Curveset, Typecast, FX Core, Vault, Kinetic
 ## License
 
 Activate with a key in the format `OMNI-XXXX-XXXX-XXXX-XXXX`.
-One key works on **up to 3 devices**. Re-installs on the same device count as zero.
+**Activation is 100% offline** — no internet required, ever. Per the license terms, one key is for personal use on up to 3 devices owned by the buyer.
 
-> Vendor setup: [`docs/LICENSE-SETUP.md`](docs/LICENSE-SETUP.md)
+> Vendor guide: [`docs/LICENSING.md`](docs/LICENSING.md)
 > Security model + caveats: [`docs/SECURITY.md`](docs/SECURITY.md)
 
 ---
