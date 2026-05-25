@@ -11,9 +11,27 @@
     var el = document.createElement("div");
     el.className = "toast " + (type || "");
     el.textContent = msg;
+    // Errors stick around longer and are click-to-dismiss + click-to-copy
+    var isErr = (type === "error");
+    if (isErr) {
+      el.style.cursor = "pointer";
+      el.style.maxWidth = "560px";
+      el.style.whiteSpace = "pre-wrap";
+      el.title = "Click to copy this error";
+      el.addEventListener("click", function () {
+        try {
+          if (navigator.clipboard) navigator.clipboard.writeText(msg);
+          var hint = document.createElement("div");
+          hint.style.cssText = "font-size:10px; color:var(--fg-3); margin-top:4px";
+          hint.textContent = "(copied)";
+          el.appendChild(hint);
+        } catch (e) {}
+      });
+    }
     toastHost.appendChild(el);
-    setTimeout(function () { el.style.opacity = "0"; el.style.transform = "translateY(8px)"; }, 2400);
-    setTimeout(function () { el.remove(); }, 2700);
+    var lifetime = isErr ? 14000 : 2400;
+    setTimeout(function () { el.style.opacity = "0"; el.style.transform = "translateY(8px)"; }, lifetime);
+    setTimeout(function () { el.remove(); }, lifetime + 300);
   }
   document.addEventListener("of:toast", function (e) { toast(e.detail.message, e.detail.type); });
 

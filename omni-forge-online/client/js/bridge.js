@@ -44,16 +44,27 @@
     if (hostBootPromise) return hostBootPromise;
     hostBootPromise = rawEval(PROBE).then(function (status) {
       if (status === "ready") return true;
-      // Need to boot. Inject the extension root and re-evaluate main.jsx.
+      // Need to boot. Inject the extension root and re-evaluate main.jsx
+      // with FULL diagnostic capture so the user sees the real error.
       var extRoot = cs.getSystemPath(SystemPath.EXTENSION);
       var safe = escapeForES(extRoot);
       var bootScript =
         '$.global._OF_EXT_ROOT = "' + safe + '"; ' +
-        'try { $.evalFile(new File("' + safe + '/host/main.jsx")); } catch (e) { e.toString(); } ' +
-        PROBE;
+        '$.global._OF_BOOT_LOG = []; ' +
+        'try { ' +
+          'var __mf = new File("' + safe + '/host/main.jsx"); ' +
+          '$.global._OF_BOOT_LOG.push("main.jsx exists=" + __mf.exists); ' +
+          'if (__mf.exists) $.evalFile(__mf); ' +
+          'else $.global._OF_BOOT_LOG.push("PATH=" + __mf.fsName); ' +
+        '} catch (e) { ' +
+          '$.global._OF_BOOT_LOG.push("evalFile threw: " + e.toString() + " (line " + (e.line||"?") + ")"); ' +
+        '} ' +
+        '(typeof $.__omniForgeDispatch === "function" && typeof OF !== "undefined" && typeof OF.U !== "undefined") ' +
+          '? "ready" ' +
+          ': ("BOOT_FAIL | " + (typeof OF==="undefined"?"OF=undefined":(typeof OF.U==="undefined"?"OF.U=undefined":"dispatcher=missing")) + " | log: " + $.global._OF_BOOT_LOG.join("; ") + " | extRoot=' + safe + '")';
       return rawEval(bootScript).then(function (r) {
         if (r === "ready") return true;
-        throw new Error("Host engine failed to load. Try restarting After Effects. (status: " + r + ")");
+        throw new Error(r || "Host engine returned no response. Restart AE and try again.");
       });
     }).catch(function (e) {
       hostBootPromise = null;
@@ -116,3 +127,45 @@
     isWin:          cs.getOSInformation().indexOf("Windows") >= 0
   };
 })(window);
+
+
+// ============================================================
+// Diagnostic helper - call Bridge.diagnostic() from console or
+// the Studio tab to get full state for support.
+// ============================================================
+(function () {
+  function diagnostic() {
+    var fs = (typeof require !== "undefined") ? (function(){ try { return require("fs"); } catch(e){ return null; } })() : null;
+    var path = (typeof require !== "undefined") ? (function(){ try { return require("path"); } catch(e){ return null; } })() : null;
+    var extRoot = window.Bridge.extensionRoot;
+    var report = {
+      time: new Date().toISOString(),
+      extensionRoot: extRoot,
+      isWin: window.Bridge.isWin,
+      isMac: window.Bridge.isMac
+    };
+    if (fs && path) {
+      report.installedVersion = (function(){ try { return fs.readFileSync(path.join(extRoot, ".installed-version"),"utf8").trim(); } catch(e){ return "(missing)"; } })();
+      report.hasBridgeJs    = fs.existsSync(path.join(extRoot, "client", "js", "bridge.js"));
+      report.hasMainJsx     = fs.existsSync(path.join(extRoot, "host", "main.jsx"));
+      report.hasUtilsJsx    = fs.existsSync(path.join(extRoot, "host", "lib", "utils.jsx"));
+      report.modulesPresent = (function(){ try { return fs.readdirSync(path.join(extRoot, "host", "modules")); } catch(e){ return []; } })();
+    } else {
+      report.fs = "node fs unavailable";
+    }
+    return window.Bridge.rawEval(
+      'JSON.stringify({' +
+        'OF: typeof OF, ' +
+        'OF_U: typeof OF !== "undefined" ? typeof OF.U : "n/a", ' +
+        'dispatcher: typeof $.__omniForgeDispatch, ' +
+        'extRoot: $.global._OF_EXT_ROOT || "(not set)", ' +
+        'bootLog: ($.global._OF_BOOT_LOG || []).join("; "), ' +
+        'fileName: $.fileName || "(empty)"' +
+      '})'
+    ).then(function (raw) {
+      try { report.host = JSON.parse(raw); } catch (e) { report.host = { raw: raw }; }
+      return report;
+    });
+  }
+  window.Bridge.diagnostic = diagnostic;
+})();
