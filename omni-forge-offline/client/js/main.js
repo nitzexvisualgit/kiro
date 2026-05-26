@@ -1,8 +1,48 @@
 /**
- * main.js - bootstrap and global helpers (toast, modal).
+ * main.js - bootstrap and global helpers (toast, modal, openURL).
  */
 (function () {
   "use strict";
+
+  // ---- openURL: cross-platform external browser launcher ----
+  // Tries 3 methods so links work on every CEP version we support.
+  function openURL(url) {
+    if (!url) return false;
+    try {
+      if (window.cep && window.cep.util && typeof window.cep.util.openURLInDefaultBrowser === "function") {
+        window.cep.util.openURLInDefaultBrowser(url);
+        return true;
+      }
+    } catch (e) {}
+    try {
+      if (typeof require !== "undefined") {
+        var cp = require("child_process");
+        var safe = String(url).replace(/"/g, "");
+        if (process.platform === "darwin")      cp.exec('open "' + safe + '"');
+        else if (process.platform === "win32")  cp.exec('start "" "' + safe + '"');
+        else                                    cp.exec('xdg-open "' + safe + '"');
+        return true;
+      }
+    } catch (e) {}
+    try {
+      if (window.Bridge) {
+        var cmd = window.Bridge.isWin ? 'cmd /c start "" "' + url + '"' : 'open "' + url + '"';
+        window.Bridge.rawEval('system.callSystem("' + cmd.replace(/"/g, '\\"') + '")');
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+
+  // Bind globally on document so links work on the license gate AND main app.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-link]");
+    if (a && a.dataset.link) {
+      e.preventDefault();
+      openURL(a.dataset.link);
+    }
+  }, true);
 
   // ---- Toast ----
   var toastHost = null;
@@ -11,7 +51,6 @@
     var el = document.createElement("div");
     el.className = "toast " + (type || "");
     el.textContent = msg;
-    // Errors stick around longer and are click-to-dismiss + click-to-copy
     var isErr = (type === "error");
     if (isErr) {
       el.style.cursor = "pointer";
@@ -34,6 +73,7 @@
     setTimeout(function () { el.remove(); }, lifetime + 300);
   }
   document.addEventListener("of:toast", function (e) { toast(e.detail.message, e.detail.type); });
+
 
   // ---- Modal ----
   function modal(opts) {
@@ -73,6 +113,7 @@
   window.OF = window.OF || {};
   window.OF.toast = toast;
   window.OF.modal = modal;
+  window.OF.openURL = openURL;
 
 
   // ---- License gate flow ----
@@ -94,7 +135,6 @@
     var input = document.getElementById("licenseKeyInput");
     var btn   = document.getElementById("activateBtn");
     var status = document.getElementById("licenseStatus");
-
     function tryActivate() {
       var key = input.value.trim().toUpperCase();
       if (!/^OMNI(-[A-Z0-9]{4}){4}$/.test(key)) {
@@ -120,15 +160,11 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     bindGate();
-    // Try silent validation first
     if (typeof License === "undefined" || !License.fingerprint) {
-      // Node integration not available - dev mode: skip gate
       console.warn("Node integration unavailable - bypassing license for dev.");
       showApp();
       return;
     }
-    License.validate().then(showApp).catch(function (e) {
-      showGate(e && e.message ? null : null); // initial silent state
-    });
+    License.validate().then(showApp).catch(function () { showGate(null); });
   });
 })();

@@ -168,7 +168,7 @@ Router.register("curveset", function (root) {
   // Apply
   root.querySelector("#bzApply").addEventListener("click", function () {
     Bridge.call("Easing.run", { curve: curve, side: side })
-      .then(function (r) { OF.toast("Eased " + r.keyframes + " keyframes", "success"); })
+      .then(function (r) { OF.toast("Eased " + r.pairs + " keyframe pair" + (r.pairs !== 1 ? "s" : "") + " across " + r.properties + " propert" + (r.properties !== 1 ? "ies" : "y"), "success"); })
       .catch(function (e) { OF.toast(e.message, "error"); });
   });
 

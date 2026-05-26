@@ -39,11 +39,8 @@
         go(e.currentTarget.dataset.tab);
       });
     }
-    // open external links via system browser
-    document.body.addEventListener("click", function (e) {
-      var a = e.target.closest("a[data-link]");
-      if (a) { e.preventDefault(); Bridge.cs.openURLInDefaultBrowser(a.dataset.link); }
-    });
+    // External link handling lives in main.js (bound globally so it
+    // works on the license gate too, before Router.init runs).
   }
 
   global.Router = { register: register, go: go, init: init, current: function () { return current; } };

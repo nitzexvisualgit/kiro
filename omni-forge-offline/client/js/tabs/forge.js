@@ -103,6 +103,20 @@ Router.register("forge", function (root) {
       '<button class="btn btn-primary btn-block mt-2" data-act="counter">Create Counter</button>' +
     '</div>' +
 
+    // SRT CAPTIONS
+    '<div class="card">' +
+      '<div class="card-header"><div class="card-title">SRT Captions</div></div>' +
+      '<p style="font-size:var(--fs-xs); color:var(--fg-3); margin-bottom:var(--s-3); line-height:1.5">Import a .srt subtitle file - one text layer is created per cue with timing pre-set.</p>' +
+      '<div class="grid-2">' +
+        '<div class="field"><label class="label">Font Size</label><input class="input" id="srtSize" value="60"></div>' +
+        '<div class="field"><label class="label">Y Position (px from top, blank = 85%)</label><input class="input" id="srtY" placeholder="auto"></div>' +
+      '</div>' +
+      '<div class="field mt-2"><label class="label">Font (PostScript name, blank = AE default)</label><input class="input" id="srtFont" placeholder="e.g. Arial-BoldMT"></div>' +
+      '<label class="check mt-2"><input type="checkbox" id="srtStroke"> Add black outline</label>' +
+      '<label class="check mt-2"><input type="checkbox" id="srtPrecomp"> Group all captions into one precomp</label>' +
+      '<button class="btn btn-amber btn-block mt-3" data-act="srtImport">Import SRT File...</button>' +
+    '</div>' +
+
 
     // LAYER CREATION
     '<div class="card">' +
@@ -321,6 +335,28 @@ Router.register("forge", function (root) {
       })
         .then(function () { OF.toast("Counter created", "success"); })
         .catch(function (e) { OF.toast(e.message, "error"); });
+    },
+
+    srtImport: function () {
+      // Use ExtendScript's native file dialog so we get a real OS file picker
+      Bridge.exec('(function(){ var f = File.openDialog("Choose SRT file","SRT files:*.srt,All files:*.*"); return f ? f.fsName : ""; })()')
+        .then(function (path) {
+          if (!path || path === "null" || path === "undefined" || path === "") { OF.toast("Cancelled.", "warn"); return; }
+          var fontFamily = (document.getElementById("srtFont").value || "").trim() || null;
+          var sizeRaw = parseFloat(document.getElementById("srtSize").value);
+          var posYRaw = document.getElementById("srtY").value.trim();
+          Bridge.call("SRT.importFile", {
+            path:        path,
+            fontFamily:  fontFamily,
+            fontSize:    isFinite(sizeRaw) ? sizeRaw : 60,
+            hasStroke:   document.getElementById("srtStroke").checked,
+            posY:        posYRaw === "" ? null : parseFloat(posYRaw),
+            precompose:  document.getElementById("srtPrecomp").checked,
+            groupName:   "Captions"
+          })
+            .then(function (r) { OF.toast("Imported " + r.count + " caption layer(s) - " + r.last.toFixed(1) + "s total.", "success"); })
+            .catch(function (e) { OF.toast(e.message, "error"); });
+        });
     }
   };
   root.querySelectorAll("[data-act]").forEach(function (b) {

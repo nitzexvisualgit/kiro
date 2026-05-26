@@ -66,6 +66,7 @@
     loadFile("modules/effects.jsx");
     loadFile("modules/vault.jsx");
     loadFile("modules/kinetic.jsx");
+    loadFile("modules/srt.jsx");
 
     $.writeln("[OmniForge] Host engine ready. ROOT=" + ROOT);
 })();

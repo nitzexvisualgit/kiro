@@ -67,7 +67,7 @@ for %%D in (installers keys server scripts docs .git .github node_modules) do (
 )
 del /q "%TARGET%\.debug" 2>nul
 
-echo 1.0.2 > "%TARGET%\.installed-version"
+echo 1.0.3 > "%TARGET%\.installed-version"
 
 for %%V in (9 10 11 12 13) do (
     reg add "HKEY_CURRENT_USER\Software\Adobe\CSXS.%%V" /v PlayerDebugMode /t REG_SZ /d 1 /f >nul 2>&1
@@ -75,7 +75,7 @@ for %%V in (9 10 11 12 13) do (
 
 echo.
 echo  ============================================================
-echo   Installed successfully ^(v1.0.2^).
+echo   Installed successfully ^(v1.0.3^).
 echo.
 echo   1. Launch After Effects
 echo   2. Window, Extensions, Omni Forge
