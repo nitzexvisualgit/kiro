@@ -17,8 +17,8 @@ Router.register("studio", function (root) {
     '<div class="card mt-3">' +
       '<div class="card-header"><div class="card-title">Connect</div></div>' +
       '<div class="grid-2" style="gap:var(--s-2)">' +
-        '<a class="btn btn-block" data-link="https://www.youtube.com/nitzex_visual">▶ YouTube</a>' +
-        '<a class="btn btn-block" data-link="https://www.facebook.com/">Facebook</a>' +
+        '<a class="btn btn-block" data-link="https://www.youtube.com/@nitzex_visual">▶ YouTube</a>' +
+        '<a class="btn btn-block" data-link="https://www.facebook.com/profile.php?id=61578508975077">Facebook</a>' +
         '<a class="btn btn-block" data-link="https://www.instagram.com/nitzexvisual">Instagram</a>' +
         '<a class="btn btn-block" data-link="https://www.linkedin.com/in/nitinshankhwar/">LinkedIn</a>' +
       '</div>' +
@@ -29,8 +29,7 @@ Router.register("studio", function (root) {
       '<div class="card-header"><div class="card-title">Support The Work</div></div>' +
       '<p style="font-size:var(--fs-sm); color:var(--fg-2); line-height:1.5; margin-bottom:var(--s-3); text-align:center">If Omni Forge saves you time, consider supporting future development.</p>' +
       '<div class="grid-2">' +
-        '<a class="btn btn-danger" data-link="https://patreon.com/nitzexvisual">♥ Support on Patreon</a>' +
-        '<a class="btn" data-link="https://paypal.me/nitzexbusiness">PayPal</a>' +
+        '<a class="btn btn-amber btn-block" data-link="https://paypal.me/nitinsankhwar?locale.x=en_GB&country.x=IN">Support via PayPal</a>' +
       '</div>' +
     '</div>' +
 

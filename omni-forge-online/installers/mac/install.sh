@@ -58,7 +58,7 @@ if [ ! -f "$TARGET_DIR/client/js/bridge.js" ]; then
 fi
 
 # Stamp version marker
-echo "1.0.3" > "$TARGET_DIR/.installed-version"
+echo "1.0.4" > "$TARGET_DIR/.installed-version"
 
 # Enable CEP PlayerDebugMode for all CSXS versions
 for v in 9 10 11 12 13; do
@@ -68,7 +68,7 @@ done
 
 echo
 echo "  ============================================================"
-echo "   Installed successfully (v1.0.3)."
+echo "   Installed successfully (v1.0.4)."
 echo
 echo "   1. Launch After Effects"
 echo "   2. Window > Extensions > Omni Forge"

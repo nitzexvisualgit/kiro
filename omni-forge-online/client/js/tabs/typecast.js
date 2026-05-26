@@ -19,6 +19,10 @@ Router.register("typecast", function (root) {
       '</div>' +
       '<input class="input" id="tcSearch" placeholder="Search font family or PostScript name...">' +
       '<div id="tcInstalledList" class="mt-2" style="max-height:280px; overflow-y:auto; background:var(--bg-2); border-radius:var(--r-2); border:1px solid var(--line)"></div>' +
+      '<div class="field mt-2">' +
+        '<label class="label">Or type PostScript name manually</label>' +
+        '<input class="input" id="tcManual" placeholder="e.g. Arial-BoldMT, HelveticaNeue, MyriadPro-Regular">' +
+      '</div>' +
       '<div id="tcSelected" style="margin-top:var(--s-2); padding:var(--s-2); background:var(--bg-2); border-radius:var(--r-2); font-size:var(--fs-xs); color:var(--fg-3); text-align:center">No replacement font selected</div>' +
     '</div>' +
 
@@ -137,22 +141,38 @@ Router.register("typecast", function (root) {
 
   root.querySelectorAll("[data-mode]").forEach(function (b) {
     b.addEventListener("click", function () {
-      if (!replacementFont) {
-        OF.toast("Pick a replacement font from the installed list first.", "warn");
+      var manualVal = (root.querySelector("#tcManual").value || "").trim();
+      var target = manualVal || replacementFont;
+      if (!target) {
+        OF.toast("Pick a replacement font from the list, or type a PostScript name in the manual box.", "warn");
         return;
       }
       var mode = b.dataset.mode;
       Bridge.call("Fonts.replace", {
         from:  sourceFont || "*",
-        to:    replacementFont,
+        to:    target,
         scope: mode
       })
         .then(function (r) {
-          OF.toast("Replaced font on " + r.replaced + " text layer" + (r.replaced !== 1 ? "s" : "") + " (" + r.scope + ")", "success");
+          var msg = "Replaced font on " + r.replaced + " of " + r.total + " text layer(s) (" + r.scope + ")";
+          if (r.failed) msg += " - " + r.failed + " failed";
+          OF.toast(msg, "success");
           renderInUse();
         })
         .catch(function (e) { OF.toast(e.message, "error"); });
     });
+  });
+
+  // Track manual input as the active replacement
+  root.querySelector("#tcManual").addEventListener("input", function (e) {
+    var v = e.target.value.trim();
+    if (v) {
+      root.querySelector("#tcSelected").innerHTML = 'Replacement: <strong style="color:var(--primary)">' + v + '</strong> (manual)';
+    } else if (replacementFont) {
+      root.querySelector("#tcSelected").innerHTML = 'Replacement: <strong style="color:var(--primary)">' + replacementFont + '</strong>';
+    } else {
+      root.querySelector("#tcSelected").textContent = "No replacement font selected";
+    }
   });
 
   // Initial loads
