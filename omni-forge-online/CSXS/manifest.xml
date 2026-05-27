@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Omni Forge by Nitzex Visual
+  Commercial CEP Extension for Adobe After Effects
+  Compatible: AE 17.0 (CC 2020) through AE 25.x and beyond
+-->
+<ExtensionManifest Version="11.0"
+                   ExtensionBundleId="com.nitzexvisual.omniforge"
+                   ExtensionBundleVersion="1.0.0"
+                   ExtensionBundleName="Omni Forge"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <ExtensionList>
+    <Extension Id="com.nitzexvisual.omniforge.panel" Version="1.0.0"/>
+  </ExtensionList>
+
+  <ExecutionEnvironment>
+    <HostList>
+      <!-- After Effects: AEFT -->
+      <Host Name="AEFT" Version="[17.0,99.9]"/>
+    </HostList>
+
+    <LocaleList>
+      <Locale Code="All"/>
+    </LocaleList>
+
+    <RequiredRuntimeList>
+      <RequiredRuntime Name="CSXS" Version="9.0"/>
+    </RequiredRuntimeList>
+  </ExecutionEnvironment>
+
+  <DispatchInfoList>
+    <Extension Id="com.nitzexvisual.omniforge.panel">
+      <DispatchInfo>
+        <Resources>
+          <MainPath>./client/index.html</MainPath>
+          <ScriptPath>./host/main.jsx</ScriptPath>
+          <CEFCommandLine>
+            <Parameter>--allow-file-access</Parameter>
+            <Parameter>--allow-file-access-from-files</Parameter>
+            <Parameter>--enable-nodejs</Parameter>
+            <Parameter>--mixed-context</Parameter>
+            <Parameter>--disable-features=HardwareMediaKeyHandling</Parameter>
+          </CEFCommandLine>
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <Menu>Omni Forge</Menu>
+          <Geometry>
+            <Size>
+              <Height>720</Height>
+              <Width>420</Width>
+            </Size>
+            <MinSize>
+              <Height>520</Height>
+              <Width>340</Width>
+            </MinSize>
+            <MaxSize>
+              <Height>2400</Height>
+              <Width>1600</Width>
+            </MaxSize>
+          </Geometry>
+          <Icons>
+            <Icon Type="Normal">./client/assets/icons/icon-normal.png</Icon>
+            <Icon Type="RollOver">./client/assets/icons/icon-rollover.png</Icon>
+            <Icon Type="Disabled">./client/assets/icons/icon-disabled.png</Icon>
+            <Icon Type="DarkNormal">./client/assets/icons/icon-normal.png</Icon>
+            <Icon Type="DarkRollOver">./client/assets/icons/icon-rollover.png</Icon>
+          </Icons>
+        </UI>
+      </DispatchInfo>
+    </Extension>
+  </DispatchInfoList>
+</ExtensionManifest>
