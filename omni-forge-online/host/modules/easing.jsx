@@ -21,6 +21,17 @@ OF = $.global.OF;
 OF.Easing = (function () {
 
     function getDim(prop) {
+        // The ONLY reliable way to know how many KeyframeEase objects
+        // setTemporalEaseAtKey expects is to read an existing ease array
+        // from the property itself. prop.value.length is unreliable for
+        // separated dimensions and spatial properties.
+        try {
+            if (prop.numKeys >= 1) {
+                var existing = prop.keyOutTemporalEase(1);
+                if (existing && existing.length) return existing.length;
+            }
+        } catch (e) {}
+        // Fallback: check value type
         try {
             var v = prop.value;
             if (typeof v === "number") return 1;
@@ -44,20 +55,19 @@ OF.Easing = (function () {
         if (dt <= 0.0001) {
             throw new Error("Keyframes are at the same time");
         }
-        var vA = getKeyValueAsArray(prop, kA, dim);
-        var vB = getKeyValueAsArray(prop, kB, dim);
 
         var x1 = curve[0], y1 = curve[1], x2 = curve[2], y2 = curve[3];
-        var slopeStart = (x1 > 0.0001) ? (y1 / x1) : 0;
-        var slopeEnd   = (x2 < 0.9999) ? ((1 - y2) / (1 - x2)) : 0;
+
+        // Influence-only approach (most reliable, never rejected by AE):
+        // influence = handle length as % of segment time
         var infOut = Math.max(0.1, Math.min(100, x1 * 100));
         var infIn  = Math.max(0.1, Math.min(100, (1 - x2) * 100));
 
+        // Build ease arrays with the correct dimension count
         var outArr = [], inArr = [];
         for (var d = 0; d < dim; d++) {
-            var avgSpeed = (vB[d] - vA[d]) / dt;
-            outArr.push(new KeyframeEase(avgSpeed * slopeStart, infOut));
-            inArr.push(new KeyframeEase(avgSpeed * slopeEnd, infIn));
+            outArr.push(new KeyframeEase(0, infOut));
+            inArr.push(new KeyframeEase(0, infIn));
         }
 
         var existingInA  = prop.keyInTemporalEase(kA);
@@ -69,6 +79,7 @@ OF.Easing = (function () {
         if (side === "in" || side === "both") {
             prop.setTemporalEaseAtKey(kB, inArr, existingOutB);
         }
+        // Force bezier interpolation type
         try {
             prop.setInterpolationTypeAtKey(kA, prop.keyInInterpolationType(kA), KeyframeInterpolationType.BEZIER);
             prop.setInterpolationTypeAtKey(kB, KeyframeInterpolationType.BEZIER, prop.keyOutInterpolationType(kB));
