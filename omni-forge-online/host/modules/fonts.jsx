@@ -80,26 +80,65 @@ OF.Fonts = (function () {
     function listInstalled() {
         return OF.U.safeNoUndo(function () {
             var out = [];
+            var seen = {};
+            // Method 1: app.fonts.allFonts (AE 24.0+ / 2024+)
             try {
                 if (app.fonts && app.fonts.allFonts) {
                     var all = app.fonts.allFonts;
-                    var seen = {};
-                    for (var i = 0; i < all.length; i++) {
+                    // allFonts may be an array or array-like FontList
+                    var len = all.length || 0;
+                    for (var i = 0; i < len; i++) {
                         var f = all[i];
-                        var ps = f.postScriptName || "";
+                        if (!f) continue;
+                        var ps = "";
+                        try { ps = f.postScriptName || ""; } catch (e) { continue; }
                         if (!ps || seen[ps]) continue;
                         seen[ps] = true;
-                        var family = f.fontFamily || "";
-                        var style  = f.fontStyle || "";
+                        var family = "";
+                        var style  = "";
+                        try { family = f.fontFamily || ""; } catch (e) {}
+                        try { style  = f.fontStyle || ""; } catch (e) {}
                         out.push({
                             postScriptName: ps,
                             family:         family,
                             style:          style,
-                            displayName:    family + (style ? " - " + style : "")
+                            displayName:    family + (style ? " " + style : "")
                         });
                     }
                 }
             } catch (e) {}
+
+            // Method 2: If allFonts returned nothing, try reading system fonts
+            // via Folder on Windows. This is a fallback for older AE versions.
+            if (!out.length) {
+                try {
+                    var fontDir = null;
+                    if ($.os.indexOf("Windows") >= 0) {
+                        fontDir = new Folder(Folder.system.fsName + "/Fonts");
+                    } else {
+                        fontDir = new Folder("/Library/Fonts");
+                    }
+                    if (fontDir && fontDir.exists) {
+                        var files = fontDir.getFiles();
+                        for (var j = 0; j < files.length; j++) {
+                            var ff = files[j];
+                            if (!(ff instanceof File)) continue;
+                            var nm = ff.name;
+                            if (!/\.(ttf|otf|ttc|woff)$/i.test(nm)) continue;
+                            var display = nm.replace(/\.(ttf|otf|ttc|woff)$/i, "");
+                            if (seen[display]) continue;
+                            seen[display] = true;
+                            out.push({
+                                postScriptName: display,
+                                family:         display,
+                                style:          "",
+                                displayName:    display
+                            });
+                        }
+                    }
+                } catch (e) {}
+            }
+
             out.sort(function (a, b) {
                 var fa = (a.family || a.postScriptName).toLowerCase();
                 var fb = (b.family || b.postScriptName).toLowerCase();
