@@ -115,7 +115,7 @@ OF.Fonts = (function () {
         return OF.U.safe("Replace Font", function () {
             if (!args || !args.to) throw new Error("Replacement font (PostScript name) is required.");
             var fromPS = args.from || "*";
-            var toPS   = String(args.to).trim();
+            var toPS   = String(args.to).replace(/^\s+|\s+$/g, "");
             var scope  = args.scope || "project";
 
             // Find target text layers
